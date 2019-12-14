@@ -2,6 +2,7 @@ import pickle
 from PIL import Image
 import os
 import torch
+from torch import nn
 import numpy as np
 from torchvision import transforms
 import argparse
@@ -33,8 +34,11 @@ if abs(image[0,0] - 255) < 20:
 image = Image.fromarray(image, 'L')
 image = image.resize((28, 28))
 trans = transforms.ToTensor()
+softmax_fn=nn.Softmax(dim=-1)
 x = trans(image)
 z = model(x.reshape(-1, 28*28))
-_, yhat = torch.max(z, 1)
+z = softmax_fn(z)
+probability, yhat = torch.max(z, 1)
 
 print("Prediction: {}".format(int(yhat[0])))
+print("Probability: {}".format(float(probability[0])))
