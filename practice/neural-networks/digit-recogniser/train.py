@@ -10,6 +10,21 @@ train_dataset = dsets.MNIST(root='./data', train=True, download=True, transform=
 validation_dataset = dsets.MNIST(root='./data', train=False, download=True, transform=transforms.ToTensor())
 # print("Downloaded the validating dataset:\n ", validation_dataset)
 
+# Define analysis function
+def analyse():
+	correct = 0
+	incorrect = 0
+	for (x,y) in validation_dataset:
+		z = model(x.reshape(-1, 28*28))
+		_, yhat = torch.max(z, 1)
+		if(yhat == y):
+			correct += 1
+		else:
+			incorrect += 1
+
+	return (correct, incorrect, correct/(correct+incorrect))
+
+
 args = parser.parse_args()
 
 if(not args.use_trained_model):
@@ -29,7 +44,7 @@ if(not args.use_trained_model):
 	model = Neural_Network(in_dim, Hidden, out_dim)
 
 	# Define an optimizer
-	optimizer = torch.optim.SGD(model.parameters(), lr = 0.01)
+	optimizer = torch.optim.SGD(model.parameters(), lr = 0.1)
 
 	# train the model now!! (on 100 epochs)
 	epochs = 100
@@ -37,6 +52,9 @@ if(not args.use_trained_model):
 
 	for epoch in range(epochs):
 		print('Running on epoch {}'.format(epoch + 1), flush = True)
+		if((epoch+1) % 5 == 0):
+			(C, I, A) = analyse()
+			print("Accuracy =", A, flush=True)
 		for (x,y) in trainloader:
 			optimizer.zero_grad()
 			z = model(x.view(-1,784))
@@ -57,19 +75,11 @@ else:
 	    model = pickle.load(f)	
 
 # Count the classified and miss classified data using the validation set
-correct = 0
-incorrect = 0
-for (x,y) in validation_dataset:
-	z = model(x.reshape(-1, 28*28))
-	_, yhat = torch.max(z, 1)
-	if(yhat == y):
-		correct += 1
-	else:
-		incorrect += 1
+(C, I, A) = analyse()
 
 print("Analysis:")
-print("Correctly classified data count =", correct)
-print("Incorrectly classified data count =", incorrect)
-print("Accuracy =", correct/(correct+incorrect))
+print("Correctly classified data count =", C)
+print("Incorrectly classified data count =", I)
+print("Accuracy =", A)
 
 plt.show()

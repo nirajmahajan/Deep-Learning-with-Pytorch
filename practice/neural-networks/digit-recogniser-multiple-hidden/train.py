@@ -32,8 +32,8 @@ if(not args.use_trained_model):
 	criterion = nn.CrossEntropyLoss()
 
 	# Create Dataloader objects
-	trainloader = DataLoader(dataset = train_dataset, batch_size = 2000)
-	validationloader = DataLoader(dataset = validation_dataset, batch_size = 5000)
+	trainloader = DataLoader(dataset = train_dataset, batch_size = 2000, shuffle = True)
+	validationloader = DataLoader(dataset = validation_dataset, batch_size = 5000, shuffle = False)
 
 	# Define model parameters and create a model
 	# The Neural Network will have a single hidden layer with 100 neurons
@@ -44,12 +44,10 @@ if(not args.use_trained_model):
 	model = Neural_Network(in_dim, Hidden1, Hidden2, out_dim)
 
 	# Define an optimizer
-	optimizer = torch.optim.SGD(model.parameters(), lr = 0.01)
+	optimizer = torch.optim.SGD(model.parameters(), lr = 0.1)
 
 	# train the model now!! (on 100 epochs)
 	epochs = 100
-
-
 	for epoch in range(epochs):
 		print('Running on epoch {}'.format(epoch + 1), flush = True)
 		if((epoch+1) % 5 == 0):
