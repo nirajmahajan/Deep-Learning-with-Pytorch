@@ -46,7 +46,7 @@ if(not args.use_trained_model):
 			optimizer.step()
 
 	with open('model/trained_model.pkl', 'wb') as handle:
-    	pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+		pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 else:
 	if(not os.path.isfile('model/trained_model.pkl')):
@@ -54,7 +54,7 @@ else:
 		os._exit(1)
 
 	with open('model/trained_model.pkl', 'rb') as f:
-	    model = pickle.load(f)	
+		model = pickle.load(f)	
 
 PlotParameters(model)
 plt.title('After Training')
